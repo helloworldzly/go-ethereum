@@ -444,8 +444,10 @@ func (bc *BlockChain) Export(w io.Writer) error {
 
 // ExportN writes a subset of the active chain to the given writer.
 func (bc *BlockChain) ExportN(w io.Writer, first uint64, last uint64) error {
+    log.Info("[Han]Start exporting")
 	bc.mu.RLock()
 	defer bc.mu.RUnlock()
+    log.Info("[Han]Get lock!")
 
 	if first > last {
 		return fmt.Errorf("export failed: first (%d) is greater than last (%d)", first, last)
@@ -458,7 +460,9 @@ func (bc *BlockChain) ExportN(w io.Writer, first uint64, last uint64) error {
 			return fmt.Errorf("export failed on #%d: not found", nr)
 		}
 
-		if err := block.EncodeRLP(w); err != nil {
+        // The following is changed by Han
+        if err := block.EncodeTransactions(w); err != nil {
+		//if err := block.EncodeRLP(w); err != nil {
 			return err
 		}
 	}

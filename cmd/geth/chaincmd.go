@@ -300,6 +300,7 @@ func importChain(ctx *cli.Context) error {
 }
 
 func exportChain(ctx *cli.Context) error {
+    log.Info("Start export chain")
 	if len(ctx.Args()) < 1 {
 		utils.Fatalf("This command requires an argument.")
 	}

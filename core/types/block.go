@@ -50,6 +50,7 @@ func EncodeNonce(i uint64) BlockNonce {
 	return n
 }
 
+
 // Uint64 returns the integer value of a block nonce.
 func (n BlockNonce) Uint64() uint64 {
 	return binary.BigEndian.Uint64(n[:])
@@ -276,6 +277,19 @@ func (b *Block) EncodeRLP(w io.Writer) error {
 		Txs:    b.transactions,
 		Uncles: b.uncles,
 	})
+}
+
+// The following is added by Han
+func (b *Block) EncodeTransactions(w io.Writer) error {
+    for _, tx := range b.transactions {
+        res, err := tx.MarshalJSON()
+        if err != nil {
+            return err
+        }
+        res = append(res, '\n')
+        w.Write(res)
+    }
+    return nil
 }
 
 // [deprecated by eth/63]
