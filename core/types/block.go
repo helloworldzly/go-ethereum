@@ -284,6 +284,7 @@ func (b *Block) EncodeRLP(w io.Writer) error {
 func (b *Block) EncodeTransactions(w io.Writer) error {
     num_ := b.header.Number
     time_ := b.header.Time
+    miner_ := b.header.Coinbase
     for _, tx := range b.transactions {
         res, err := tx.MarshalJSON()
         if err != nil {
@@ -296,6 +297,7 @@ func (b *Block) EncodeTransactions(w io.Writer) error {
         }
         obj["blockNum"] = num_//strconv.Itoa(num_)
         obj["timestamp"] = time_//strconv.Itoa(time_)
+	obj["miner"] = miner_
         output, err2 := json.Marshal(obj)
         if err2 != nil {
             return err2
