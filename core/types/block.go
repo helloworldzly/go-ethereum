@@ -26,6 +26,7 @@ import (
 	"sync/atomic"
 	"time"
 	"unsafe"
+	"encoding/json"  //import json
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -279,15 +280,29 @@ func (b *Block) EncodeRLP(w io.Writer) error {
 	})
 }
 
-// The following is added by Han
+// modify...liyi
 func (b *Block) EncodeTransactions(w io.Writer) error {
+    num_ := b.header.Number
+    time_ := b.header.Time
     for _, tx := range b.transactions {
         res, err := tx.MarshalJSON()
         if err != nil {
             return err
         }
-        res = append(res, '\n')
-        w.Write(res)
+        var obj map[string]interface{}
+        err1 := json.Unmarshal([]byte(res),&obj)
+        if err1 != nil {
+            return err1
+        }
+        obj["blockNum"] = num_//strconv.Itoa(num_)
+        obj["timestamp"] = time_//strconv.Itoa(time_)
+        output, err2 := json.Marshal(obj)
+        if err2 != nil {
+            return err2
+        }
+
+        output = append(output, '\n')
+        w.Write(output)
     }
     return nil
 }
